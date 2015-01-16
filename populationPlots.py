@@ -3,9 +3,6 @@ Copyright (c) 2014, K. Kumar (me@kartikkumar.com)
 All rights reserved.
 '''
 
-def convertMeanMotionToSemiMajorAxis(meanMotion,gravitionalParameter):
-	return ( gravitionalParameter[1] / ( meanMotion * meanMotion ) ) ** ( 1.0 / 3.0 )
-
 ###################################################################################################
 # Set up input deck
 ###################################################################################################
@@ -17,7 +14,7 @@ tleCatalogFilePath 			= ""
 tleEntryNumberOfLines		= 3
 
 # Set path to output directory.
-outputPath 					= ""
+outputPath 					= "."
 
 # Set figure DPI.
 figureDPI 					= 300
@@ -45,10 +42,12 @@ from matplotlib import rcParams
 import matplotlib.pyplot as plt
 import numpy as np
 
+from twoBodyMethods import convertMeanMotionToSemiMajorAxis
+
 ###################################################################################################
 
 ###################################################################################################
-# Parse TLE catalog
+# Read and store TLE catalog
 ###################################################################################################
 
 # Read in catalog and store lines in list.
@@ -73,11 +72,13 @@ raan = []
 ecc = []
 aop = []
 for i in xrange(len(inclinationSortedObjects)-1):
-	inclinations.append(inclinationSortedObjects[i].inclo)	
+	inclinations.append(inclinationSortedObjects[i].inclo)
 	raan.append(inclinationSortedObjects[i].nodeo)
-	ecc.append(inclinationSortedObjects[i].ecco)	
-	aop.append(inclinationSortedObjects[i].argpo)	
- 
+	ecc.append(inclinationSortedObjects[i].ecco)
+	aop.append(inclinationSortedObjects[i].argpo)
+
+###################################################################################################
+
 ###################################################################################################
 # Generate plots
 ###################################################################################################
@@ -91,12 +92,12 @@ axis = figure.add_subplot(111)
 plt.xlabel("Semi-major axis [km]")
 plt.ylabel("Eccentricity [-]")
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.plot([convertMeanMotionToSemiMajorAxis(debrisObject.no/60.0, getgravconst('wgs72')) \
+plt.plot([convertMeanMotionToSemiMajorAxis(debrisObject.no/60.0, getgravconst('wgs72')[1]) \
 		  for debrisObject in debrisObjects], \
 	     [debrisObject.ecco for debrisObject in debrisObjects], \
 	     marker='o', markersize=5, linestyle='none')
 axis.set_xlim(xmax=5.0e4)
-plt.tight_layout(True)
+figure.set_tight_layout(True)
 plt.savefig(outputPath + "/figure1_debrisPopulation_eccentricityVsSemiMajorAxis.pdf", \
 			dpi = figureDPI)
 plt.close()
@@ -110,7 +111,8 @@ plt.plot(ecc*np.cos(aop),ecc*np.sin(aop), marker='o', markersize=5, linestyle='n
 plt.axis('equal')
 axis.set_xlim(xmin=-1.0, xmax=1.0)
 axis.set_ylim(ymin=-1.0, ymax=1.0)
-plt.tight_layout(True)
+figure.set_tight_layout(True)
+plt.savefig(outputPath + "/figure2_debrisPopulation_eccentricityVector.pdf", dpi = figureDPI)
 plt.savefig(outputPath + "/figure2_debrisPopulation_eccentricityVector.pdf", dpi = figureDPI)
 plt.close()
 
@@ -120,12 +122,12 @@ axis = figure.add_subplot(111)
 plt.xlabel("Semi-major axis [km]")
 plt.ylabel("Inclination [deg]")
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.plot([convertMeanMotionToSemiMajorAxis(debrisObject.no/60.0, getgravconst('wgs72')) \
+plt.plot([convertMeanMotionToSemiMajorAxis(debrisObject.no/60.0, getgravconst('wgs72')[1]) \
 		  for debrisObject in debrisObjects], \
 	     [np.rad2deg(debrisObject.inclo) for debrisObject in debrisObjects], \
 	     marker='o', markersize=5, linestyle='none')
 axis.set_xlim(xmax=5.0e4)
-plt.tight_layout(True)
+figure.set_tight_layout(True)
 plt.savefig(outputPath + "/figure3_debrisPopulation_inclinationVsSemiMajorAxis.pdf", \
 			dpi = figureDPI)
 plt.close()
@@ -140,7 +142,7 @@ plt.plot(np.rad2deg(inclinations)*np.cos(raan),np.rad2deg(inclinations)*np.sin(r
 plt.axis('equal')
 axis.set_xlim(xmin=-180.0, xmax=180.0)
 axis.set_ylim(ymin=-180.0, ymax=180.0)
-plt.tight_layout(True)
+figure.set_tight_layout(True)
 plt.savefig(outputPath + "/figure4_debrisPopulation_inclinationVector.pdf", dpi = figureDPI)
 plt.close()
 

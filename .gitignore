@@ -39,3 +39,7 @@ debug
 
 # Project files
 *.sublime*
+*.spyder*
+
+# Data files
+*.pdf

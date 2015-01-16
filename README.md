@@ -11,6 +11,14 @@ Requirements
 Installation
 ------
 
+The following Python libraries are required:
+
+ - PIL (Pillow can be installed)
+ - Matplotlib
+ - Numpy
+ - Basemap
+ - Pandas
+
 Documentation
 -------------
 
